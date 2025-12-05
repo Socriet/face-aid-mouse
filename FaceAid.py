@@ -1,5 +1,15 @@
 import cv2
 import mediapipe as mp
+import pyautogui
+import numpy as np
+
+#config
+DEADZONE_X = 0.06
+DEADZONE_Y = 0.05
+SPEED_SENSITIVITY_X = 25.0
+SPEED_SENSITIVITY_Y = 35.0
+pyautogui.FAILSAFE = False
+screen_w, screen_h = pyautogui.size()
 
 # Setup Face Mesh
 mp_face_mesh = mp.solutions.face_mesh
@@ -14,7 +24,8 @@ cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
 while True:
     ret, frame = cam.read()
-    if not ret: break
+    if not ret: 
+        break
     
     frame = cv2.flip(frame, 1) 
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -25,9 +36,39 @@ while True:
     if results.multi_face_landmarks:
         landmarks = results.multi_face_landmarks[0].landmark
         # add logic here
+        nose = landmarks[4]
+        
+        # Calculate offset from center
+        dx = nose.x - 0.5
+        dy = nose.y - 0.5
+        
+        move_x = 0
+        move_y = 0
+        
+        # X Logic
+        if abs(dx) > DEADZONE_X:
+            if dx > 0: 
+                val = dx - DEADZONE_X
+            else:      
+                val = dx + DEADZONE_X
+            move_x = val * SPEED_SENSITIVITY_X * 50
+
+        # Y Logic
+        if abs(dy) > DEADZONE_Y:
+            if dy > 0: 
+                val = dy - DEADZONE_Y
+            else:      
+                val = dy + DEADZONE_Y
+            move_y = val * SPEED_SENSITIVITY_Y * 50
+
+        # Move Mouse
+        if move_x != 0 or move_y != 0:
+            curr_x, curr_y = pyautogui.position()
+            pyautogui.moveTo(curr_x + move_x, curr_y + move_y)
 
     cv2.imshow('FaceAid SafeBox', frame)
-    if cv2.waitKey(1) == 27: break
+    if cv2.waitKey(1) == 27: 
+        break
 
 cam.release()
 cv2.destroyAllWindows()
