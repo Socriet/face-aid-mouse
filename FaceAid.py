@@ -2,6 +2,23 @@ import cv2
 import mediapipe as mp
 import pyautogui
 import numpy as np
+import time
+
+
+#blinking
+BLINK_THRESHOLD = 0.012
+DOUBLE_BLINK_TIME = 0.6
+blink_count = 0
+last_blink_end = 0
+
+#helper functions
+def get_dist(p1, p2):
+    return np.linalg.norm(np.array([p1.x, p1.y]) - np.array([p2.x, p2.y]))
+
+def calculate_ear(landmarks):
+    left = get_dist(landmarks[159], landmarks[145])
+    right = get_dist(landmarks[386], landmarks[374])
+    return (left + right) / 2.0
 
 #config
 DEADZONE_X = 0.06
