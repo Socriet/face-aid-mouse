@@ -9,7 +9,7 @@ import os
 import subprocess
 import tkinter as tk
 
-# --- 1. SAFETY & SETUP ---
+# Setup
 pyautogui.FAILSAFE = False
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(
@@ -19,7 +19,7 @@ face_mesh = mp_face_mesh.FaceMesh(
     min_tracking_confidence=0.5
 )
 
-# --- 2. "SAFE BOX" CONFIGURATION ---
+# Safe Box Config
 # The "Deadzone" is now a box. 
 # 0.05 means you can move 5% of the screen width/height without triggering the mouse.
 DEADZONE_X = 0.06  # Horizontal "wiggle room" (Reading text)
